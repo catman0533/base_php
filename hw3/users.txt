@@ -1,0 +1,71 @@
+<?php
+
+// **Функция для проверки корректности ввода даты**
+function validateDate($date, $format = 'd-m-Y') {
+    $d = DateTime::createFromFormat($format, $date);
+    // Проверяет, соответствует ли введенная дата ожидаемому формату
+    return $d && $d->format($format) === $date;
+}
+
+// **Функция для добавления пользователя в файл**
+function addUser($name, $birthDate) {
+    if (!validateDate($birthDate)) {
+        echo "Ошибка: некорректная дата! Пожалуйста, введите в формате ДД-ММ-ГГГГ." . PHP_EOL;
+        return;
+    }
+
+    // Добавляем пользователя в файл
+    file_put_contents('users.txt', "$name, $birthDate" . PHP_EOL, FILE_APPEND);
+    echo "Пользователь $name добавлен." . PHP_EOL;
+}
+
+// **Функция для поиска именинников на текущую дату**
+function findBirthdaysToday() {
+    // Получаем текущую дату
+    $today = date('d-m');
+    $file = fopen('users.txt', 'r');
+    
+    // Чтение файла построчно
+    while (($line = fgets($file)) !== false) {
+        list($name, $birthDate) = explode(', ', trim($line));
+        if (substr($birthDate, 0, 5) === $today) {
+            echo "Сегодня день рождения у: $name" . PHP_EOL;
+        }
+    }
+    fclose($file);
+}
+
+// **Функция для удаления пользователя по имени или дате**
+function deleteEntry($query) {
+    $fileContent = file('users.txt');
+    $updatedContent = [];
+    $found = false;
+
+    // Чтение файла и удаление совпадающих строк
+    foreach ($fileContent as $line) {
+        if (strpos($line, $query) === false) {
+            $updatedContent[] = $line;
+        } else {
+            $found = true;
+        }
+    }
+
+    if ($found) {
+        // Перезаписываем файл без удаленных строк
+        file_put_contents('users.txt', $updatedContent);
+        echo "Запись с '$query' удалена." . PHP_EOL;
+    } else {
+        echo "Запись с '$query' не найдена." . PHP_EOL;
+    }
+}
+
+// **Пример использования: добавление пользователя**
+addUser('Иван Иванов', '25-12-1990');
+
+// **Пример поиска именинников**
+findBirthdaysToday();
+
+// **Пример удаления записи**
+deleteEntry('Иван Иванов');
+
+?>
