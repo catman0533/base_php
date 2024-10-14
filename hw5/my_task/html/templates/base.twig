@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Основной каркас</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    {% include 'header.php' %}
+    <main>
+        <h2>Добро пожаловать!</h2>
+        <p>Текущее время: {{ time }}</p>
+        {% include 'sidebar.php' %}
+    </main>
+    {% include 'footer.php' %}
+</body>
+</html>
